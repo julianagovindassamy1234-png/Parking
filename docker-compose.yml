@@ -1,0 +1,47 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: parking-db
+    environment:
+      POSTGRES_DB: parking_db
+      POSTGRES_USER: parking_user
+      POSTGRES_PASSWORD: parking_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U parking_user -d parking_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    container_name: parking-backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      DB_URL: jdbc:postgresql://postgres:5432/parking_db
+      DB_USER: parking_user
+      DB_PASS: parking_pass
+      JWT_SECRET: parking-system-jwt-secret-key-change-in-production-min-256-bits
+    ports:
+      - "8080:8080"
+    restart: on-failure
+
+  frontend:
+    build: ./frontend
+    container_name: parking-frontend
+    depends_on:
+      - backend
+    ports:
+      - "5173:80"
+    restart: on-failure
+
+volumes:
+  postgres_data:
