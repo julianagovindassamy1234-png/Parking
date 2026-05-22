@@ -1,0 +1,56 @@
+{
+  "project": "EV Charging System",
+  "feature_id": "<feature-id>",
+  "test_type": "<integration | e2e | regression>",
+  "executed_by": "Quality Engineer (Claude)",
+  "executed_on": "<YYYY-MM-DDTHH:MM:SS>",
+  "build_commit": "<git SHA or null>",
+  "linked_scenario": "test/<test-type>/<feature-id>_scenario.md",
+  "overall_result": "PASS | FAIL | PARTIAL",
+  "pass_rate": {
+    "passed": 0,
+    "failed": 0,
+    "total": 0
+  },
+  "summary": "One sentence describing the run.",
+  "preconditions": [
+    {
+      "description": "Backend running on localhost:8080",
+      "verified": true
+    },
+    {
+      "description": "Test driver account exists",
+      "verified": true
+    }
+  ],
+  "steps": [
+    {
+      "number": 1,
+      "action": "POST /api/auth/login with test driver credentials",
+      "expected": "200 OK, JWT returned",
+      "actual": "200 OK, JWT received",
+      "result": "PASS",
+      "notes": ""
+    },
+    {
+      "number": 2,
+      "action": "GET /api/stations/STN-001",
+      "expected": "status = AVAILABLE",
+      "actual": "status = OCCUPIED",
+      "result": "FAIL",
+      "notes": "Linked to BUG-2026-05-22-001"
+    }
+  ],
+  "bugs_raised": [
+    {
+      "bug_id": "BUG-2026-05-22-001",
+      "step_number": 2,
+      "severity": "High",
+      "title": "Station state not reset between test runs",
+      "filed_at": "reports/bugs/open.md"
+    }
+  ],
+  "environment_notes": "Anything unusual about this run.",
+  "decision": "SHIP | HOLD | CONDITIONAL",
+  "decision_rationale": "Why this decision."
+}
